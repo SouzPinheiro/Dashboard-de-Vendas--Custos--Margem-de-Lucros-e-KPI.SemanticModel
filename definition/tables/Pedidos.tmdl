@@ -1,0 +1,77 @@
+table Pedidos
+	lineageTag: 11a8d09d-6900-481c-82fe-4fbbaf6dc5bd
+
+	column 'ID Pedido'
+		dataType: string
+		lineageTag: cc5c546e-74e4-4c6f-ac44-772163f0df30
+		summarizeBy: none
+		sourceColumn: ID Pedido
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Data Pedido'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 26153795-645c-46ec-9d48-a2d9264d4299
+		summarizeBy: none
+		sourceColumn: Data Pedido
+
+		variation Variation
+			isDefault
+			relationship: a6b54707-b681-49ae-8024-653e7ba3c162
+			defaultHierarchy: LocalDateTable_c5f13cbb-5241-4197-8634-fa7962888729.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Data Envio'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2d2c8c35-9317-4f5f-9398-7735847823e3
+		summarizeBy: none
+		sourceColumn: Data Envio
+
+		variation Variation
+			isDefault
+			relationship: 9dcb5d72-d421-41eb-8e9c-b8cdd10e2779
+			defaultHierarchy: LocalDateTable_acc08a63-cd8f-4238-bd09-ed32b60dabab.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Modo Envio'
+		dataType: string
+		lineageTag: 48e8d9d9-a40a-48cb-8bd1-86e3e8ad434e
+		summarizeBy: none
+		sourceColumn: Modo Envio
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Prioridade Pedido'
+		dataType: string
+		lineageTag: e829c9a9-fef9-4732-bb06-6dbaa27bc7ba
+		summarizeBy: none
+		sourceColumn: Prioridade Pedido
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Pedidos = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents("C:\Users\ALEXANDRE\OneDrive\Área de Trabalho\Exercícios Analista de BI\Pedidos.csv"),[Delimiter=";", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(Fonte, [PromoteAllScalars=true]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"ID Pedido", type text}, {"Data Pedido", type date}, {"Data Envio", type date}, {"Modo Envio", type text}, {"Prioridade Pedido", type text}}),
+				    #"Linhas em Branco Removidas" = Table.SelectRows(#"Tipo Alterado", each not List.IsEmpty(List.RemoveMatchingItems(Record.FieldValues(_), {"", null}))),
+				    #"Texto Aparado" = Table.TransformColumns(#"Linhas em Branco Removidas",{{"ID Pedido", Text.Trim, type text}}),
+				    #"Texto Limpo" = Table.TransformColumns(#"Texto Aparado",{{"ID Pedido", Text.Clean, type text}}),
+				    #"Duplicatas Removidas" = Table.Distinct(#"Texto Limpo")
+				in
+				    #"Duplicatas Removidas"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

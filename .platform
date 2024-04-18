@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Dashboard de Vendas, Custos, Margem de Lucros e KPI"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "1878a98f-3e5f-48fb-ad00-6490333f502e"
+  }
+}
